@@ -1,5 +1,5 @@
-import pandas as pd
 import pyomo.environ as pyo
+import pandas as pd
 
 def sudoku_model(board):
 
@@ -9,7 +9,8 @@ def sudoku_model(board):
     # board = pd.read_excel('./sudoku_input_0.xlsx', header=None)
     board.index += 1
     board.columns += 1
-    display(board)
+    #print('Starting board:')
+    #display(board)
 
     # create sets for rows, columns and subsquares
     model.ROWS = pyo.Set(initialize=board.index)
@@ -74,6 +75,13 @@ def add_integer_cut(model):
                         cut_expr += model.y[r, c, v]
     model.IntegerCuts.add(cut_expr >= 1)
 
+# store the solution in a dataframe
+def solution_to_dataframe(model):
+
+    for r in model.ROWS:
+        pd.DataFrame(' '.join(str(v) for c in model.COLS
+                              for v in model.VALUES
+                              if pyo.value(model.y[r, c, v]) >= 0.5))
 
 # prints the solution stored in the model
 def print_solution(model):
