@@ -8,6 +8,7 @@ board = pd.read_excel('./input/sudoku_input.xlsx', header=None)
 model = sudoku_model(board)
 
 solution_count = 0
+dfs = {}
 while 1:
     with SolverFactory("glpk") as opt:
         results = opt.solve(model)
@@ -22,8 +23,12 @@ while 1:
     print("Solution #%d" % (solution_count))
     print_solution(model)
 
-    solution_to_dataframe(model)
+    df = solution_to_dataframe(model)
     
+    # store the DataFrame in the dictionary with a key
+    dfs[f'Solution_{solution_count}'] = df
+
+# generate the Excel file
 with pd.ExcelWriter('./sudoku_output.xlsx') as file:
-    for key, df in solution_df.items():
-        df.to_excel(file, sheet_name=key)
+    for key, dataframe in dfs.items():
+        dataframe.to_excel(file, sheet_name=key)

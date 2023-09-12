@@ -77,11 +77,18 @@ def add_integer_cut(model):
 
 # store the solution in a dataframe
 def solution_to_dataframe(model):
+    grid = []
 
     for r in model.ROWS:
-        pd.DataFrame(' '.join(str(v) for c in model.COLS
-                              for v in model.VALUES
-                              if pyo.value(model.y[r, c, v]) >= 0.5))
+        row_values = [] * 9 # initialize an empty row
+        for c in model.COLS:
+            for v in model.VALUES:
+                if pyo.value(model.y[r, c, v]) >= 0.5:
+                    row_values.append(v)
+        grid.append(row_values)
+    
+    df = pd.DataFrame(grid)
+    return df
 
 # prints the solution stored in the model
 def print_solution(model):
