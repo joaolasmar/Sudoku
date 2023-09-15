@@ -30,16 +30,16 @@ def sudoku_model(board):
                 model.y[r, c, board.loc[r, c]].fix(1)
 
     # exactly one number in each row
-    def _row_cstr(model, c, v):
-        return sum(model.y[:, c, v]) == 1
-    
-    model.row_cstr = pyo.Constraint(model.COLS, model.VALUES, rule=_row_cstr)
-
-    # exactly one number in each column
-    def _col_cstr(model, r, v):
+    def row_cstr(model, r, v):
         return sum(model.y[r, :, v]) == 1
 
-    model.col_cstr = pyo.Constraint(model.ROWS, model.VALUES, rule=_col_cstr)
+    model.row_cstr = pyo.Constraint(model.ROWS, model.VALUES, rule=row_cstr)
+
+    # exactly one number in each column
+    def col_cstr(model, c, v):
+        return sum(model.y[:, c, v]) == 1
+
+    model.col_cstr = pyo.Constraint(model.COLS, model.VALUES, rule=col_cstr)
 
     # exactly one number in each subsquare
     def _subsquares_cstr(model, u, w, v):
